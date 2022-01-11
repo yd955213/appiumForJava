@@ -1,6 +1,7 @@
 package com.myAppium.app;
 
 import com.myAppium.Utils.uiUtil.AutoTools;
+import com.myAppium.script.testCase.Login;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
@@ -14,13 +15,24 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class AppUtil{
+    private final List<String> crashActive = Arrays.asList(".Launcher");
+    private final List<String> loadingActive = Arrays.asList(".activity.LoadingActivity");
+    private final List<String> mainActive = Arrays.asList(".activity.MainActivity");
     private AndroidDriver<?> androidDriver = null;
-    public AppUtil(){
+    private AppUtil(){
         androidDriver = AppDriver.getInstance().getAndroidDriver();
+    }
+    private static class AppUtilHolder{
+        private final static AppUtil INSTANCE = new AppUtil();
+    }
+
+    public static synchronized AppUtil getInstance(){
+        return AppUtil.AppUtilHolder.INSTANCE;
     }
 
     /**
@@ -30,7 +42,7 @@ public class AppUtil{
      * @return boolean
      */
     public boolean longPress(int x, int y){
-        if(androidDriver == null) return false;
+        if(androidDriver == null) createNewDriver();
         try {
             TouchAction<?> touchAction = new TouchAction<>(androidDriver);
             touchAction.longPress(PointOption.point(x, y)).release().perform();
@@ -47,7 +59,7 @@ public class AppUtil{
      * @return boolean
      */
     public boolean longPress(String locationExpression){
-        if(androidDriver == null) return false;
+        if(androidDriver == null) createNewDriver();
         MobileElement element = findElement(locationExpression);
         if (element == null) return false;
 
@@ -82,14 +94,14 @@ public class AppUtil{
 
     public boolean click(int x, int y){
 
-        if(androidDriver == null) return false;
+        if(androidDriver == null) createNewDriver();
 
         try {
             TouchAction<?> touchAction = new TouchAction<>(androidDriver);
             touchAction.press(PointOption.point(x, y)).release().perform();
             return true;
         }catch (Exception e){
-            System.out.println(e.getMessage());
+//            System.out.println(e.getMessage());
             System.out.println("点击屏幕失败，坐标点（"+x+", " +y+"）");
             return false;
         }
@@ -109,7 +121,7 @@ public class AppUtil{
 
     public void outScreenSave(){
         //防止屏保影响测试 点击退出屏保
-        Dimension screenSize = getScreenSize();
+//        Dimension screenSize = getScreenSize();
 //        int x = screenSize.getWidth()/2;
 //        int y = screenSize.getHeight()/2;
         /*
@@ -117,7 +129,8 @@ public class AppUtil{
             1、点击后直接进入其他Ui界面，导致用例执行失败
             2、直接报错
          */
-        click(1,screenSize.getHeight()-1);
+//        click(1,screenSize.getHeight());
+        click(0,0);
     }
 
     /**
@@ -142,20 +155,25 @@ public class AppUtil{
         MobileElement element = findElement(locationExpression);
         if(element == null || value == null )
             return null;
-
-        element.clear();
-        String text = element.getText();
-        if(text == null || text.length() <=0){
-            element.sendKeys(value);
-        }else {
+        try {
+            element.clear();
+            String text = element.getText();
+            if(text == null || text.length() <=0){
+                element.sendKeys(value);
+            }else {
             /*
             当clear()方法失效，使用adb 命令清空文本
              */
-            element.click();
-            adbClear(element);
-            adbText(value);
+                element.click();
+                adbClear(element);
+                adbText(value);
+            }
+            value = element.getText();
+        }catch (Exception e){
+            System.out.println(String.format("文本输入异常：元素定位表达式：%s，预期值：%s。", locationExpression, value));
+            value = null;
         }
-        value = element.getText();
+
         return value;
     }
 
@@ -169,7 +187,7 @@ public class AppUtil{
      */
     public boolean swipe(int start_x, int start_y, int end_x, int end_y){
 
-        if(androidDriver == null) return false;
+        if(androidDriver == null) createNewDriver();
         try {
             TouchAction<?> action = new TouchAction<>(androidDriver);
             action.longPress(PointOption.point(start_x, start_y))
@@ -288,8 +306,13 @@ public class AppUtil{
 
     public MobileElement findElement(String locationExpression){
 
-        if(androidDriver == null) return null;
+        if(androidDriver == null) createNewDriver();
         MobileElement mobileElement = null;
+        // 当前活动页是加载界面 则睡两秒
+        while (loadingActive.contains(androidDriver.currentActivity())){
+            sleep(2000);
+        }
+
         try {
             if(locationExpression.contains(":id/")) {
                 mobileElement= (MobileElement) androidDriver.findElementById(locationExpression);
@@ -300,7 +323,10 @@ public class AppUtil{
             }
         }catch (Exception e){
             System.out.println("未找到元素, 元素表达式为: " + locationExpression);
-            System.out.println(e.getMessage());
+            // 当前测试app 奔溃 检查到的活动页为 .Launcher， 如果是其他的app 程序，请获取APP 奔溃后的 活动页，修修改
+            if(crashActive.contains(androidDriver.currentActivity())){
+                crashApp();
+            }
             // NoSuchElementException
         }
         return mobileElement;
@@ -313,7 +339,7 @@ public class AppUtil{
      */
     public boolean findElementByWebDriverWait(String value){
 
-        if(androidDriver == null) return false;
+        if(androidDriver == null) createNewDriver();
         try {
             new WebDriverWait(androidDriver, 5)
                     .until(ExpectedConditions.presenceOfElementLocated(
@@ -338,7 +364,30 @@ public class AppUtil{
         }
     }
 
+    private void createNewDriver(){
+        if (androidDriver != null) close();
+        // AppDriver 本来设计为单列，测试中发现app容易奔溃导致appium 需要重新链接，这里有点打破单利模式的样子
+        while (androidDriver == null) {
+            androidDriver = AppDriver.getInstance().createNewDriver();
+            sleep(1000);
+        }
+    }
     public AndroidDriver<?> getAndroidDriver() {
         return androidDriver;
+    }
+
+//    public AppUtil setAndroidDriver(AndroidDriver<?> androidDriver) {
+//        this.androidDriver = androidDriver;
+//        return this;
+//    }
+
+    /**
+     * App 奔溃后的处理方法：关闭driver, 重新获取driver, 重新登陆app
+     */
+    public void crashApp(){
+        close();
+        createNewDriver();
+        Login login = new Login();
+        login.login(login.getPassWord());
     }
 }

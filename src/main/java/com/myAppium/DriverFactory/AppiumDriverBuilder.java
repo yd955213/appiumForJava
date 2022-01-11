@@ -1,10 +1,6 @@
 package com.myAppium.DriverFactory;
-
-import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
@@ -12,7 +8,7 @@ public class AppiumDriverBuilder {
     private final DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
     private String deviceName;
     private String platformName= "Android";
-    private String platformVersion;
+    private String platformVersion = "9";
     private final String appPackage;
     private final String appActivity;
     private Boolean noReset = true;
@@ -25,15 +21,21 @@ public class AppiumDriverBuilder {
     private int appiumPort = 4723;
     private AndroidDriver androidDriver;
 
+    /**
+     *  必须调用createAppiumDriver（）方法 否则androidDriver为空
+     * @param deviceName
+     * @param appPackage
+     * @param appActivity
+     */
     public AppiumDriverBuilder(String deviceName, String appPackage, String appActivity) {
         this.appPackage = appPackage;
         this.deviceName = deviceName;
         this.appActivity = appActivity;
         this.udId = this.deviceName;
-        createAppiumDriver();
     }
 
     public AndroidDriver createAppiumDriver(){
+        System.out.println("初始化driver");
         androidDriver = null;
         setCapabilities("deviceName", deviceName);
         setCapabilities("platformName", platformName);
@@ -46,13 +48,14 @@ public class AppiumDriverBuilder {
         setCapabilities("automationName", automationName);
         setCapabilities("noSign", noSign);
         setCapabilities("udId", udId);
+        setCapabilities("newcommandtimeout", "3600");
 
         try{
 //            System.out.println(desiredCapabilities.toString());
             androidDriver = new AndroidDriver(new URL("http://"+appiumServerIp+":"+appiumPort+"/wd/hub"), desiredCapabilities);
 
             //隐式等待。
-            androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            androidDriver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
         } catch (Exception e) {
 //            e.printStackTrace();
             System.out.println("app启动失败，请检查appium日志信息！" + e.getMessage());

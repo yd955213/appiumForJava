@@ -17,7 +17,7 @@ class SystemUtilsTest {
     void goToSystemSettingUi1() {
         Login login = new Login();
         login.login(login.getPassWord());
-        new AppUtil().click(SystemSettings.VOICE_SETTING.getValue());
+        AppUtil.getInstance().click(SystemSettings.VOICE_SETTING.getValue());
         new SystemUtils().goToSystemSettingUi();
     }
 }

@@ -6,23 +6,20 @@ import com.myAppium.entity.properties.PropertiesLocation;
 import com.myAppium.script.emun.HeaderUI;
 import com.myAppium.script.emun.HomePage;
 import io.appium.java_client.MobileElement;
-import io.appium.java_client.android.AndroidDriver;
 
 public class Login {
     AppUtil appUtil;
     private String passWord;
 
     public Login(){
-        appUtil = new AppUtil();
-        getPassWordForProperties();
+        appUtil = AppUtil.getInstance();
+        getPassWordFromProperties();
     }
 
     public boolean login(String password){
         if (appUtil.getAndroidDriver() == null) return false;
-        AndroidDriver<?> androidDriver = appUtil.getAndroidDriver();
-        if (androidDriver == null) return false;
         // 防止第一次启动时，app启动了 缺还在加载主页，这里休息一会
-        appUtil.sleep(8000);
+//        appUtil.sleep(8000);
 
         MobileElement element;
         // 弹框 的 需输入的密码框 xpath
@@ -34,7 +31,7 @@ public class Login {
             if(element != null) break;
             appUtil.sleep(2000);
             time ++;
-            if (time > 10) return false;
+            if (time > 3) return false;
         }
         element.sendKeys(password);
         return true;
@@ -46,9 +43,7 @@ public class Login {
      */
     public boolean isLogon(){
         appUtil.outScreenSave();
-        appUtil.sleep(50);
         MobileElement element = appUtil.findElement(HomePage.LOGO.getValue());
-        // 'element == null? true: false' can be simplified to 'element == null'
         return element == null;
     }
 
@@ -76,7 +71,7 @@ public class Login {
         return appUtil.findElement(locationExpression);
     }
 
-    private void getPassWordForProperties(){
+    private void getPassWordFromProperties(){
         ReadProperties readProperties = new ReadProperties(PropertiesLocation.appiumProperties);
         passWord = readProperties.getProperty("passWord");
         readProperties.close();

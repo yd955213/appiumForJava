@@ -45,4 +45,8 @@ public class AppDriver {
     public AndroidDriver<?> getAndroidDriver() {
         return androidDriver;
     }
+    public AndroidDriver<?> createNewDriver(){
+        initDriver();
+        return androidDriver;
+    }
 }

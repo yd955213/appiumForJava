@@ -1,6 +1,8 @@
 package com.myAppium;
 
+import com.myAppium.app.AppDriver;
 import com.myAppium.app.AppUtil;
+import io.appium.java_client.MobileElement;
 import org.apache.poi.ss.formula.functions.T;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -22,5 +24,37 @@ public class My01Test {
 
         AppUtil appUtil = null;
 //        System.out.println(appUtil.getAndroidDriver());
+    }
+
+    @Test
+    void test02(){
+        AppUtil appUtil = AppUtil.getInstance();
+        System.out.println(appUtil.getAndroidDriver().getSessionId());
+        appUtil.close();
+        try {
+            System.out.println(appUtil.getAndroidDriver());
+        }catch (Exception e){
+            System.out.println("关闭后无法获取");
+        }
+
+        try {
+            System.out.println(appUtil.getAndroidDriver().getSessionId());
+        }catch (Exception e){
+            System.out.println("关闭后无法获取");
+        }
+//.activity.MainActivity  Launcher
+//        appUtil.createNewDriver();
+//        System.out.println("最后：" + appUtil.getAndroidDriver().getSessionId());
+    }
+
+    @Test
+    void test03(){
+        AppUtil appUtil = AppUtil.getInstance();
+        MobileElement element;
+        while (true){
+            element = appUtil.findElement("com.das.face:id/ivLogo");
+            if(element != null)
+                System.out.println("test = ");
+        }
     }
 }

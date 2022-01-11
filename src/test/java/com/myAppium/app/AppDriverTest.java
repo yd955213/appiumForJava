@@ -18,23 +18,4 @@ class AppDriverTest {
         Assertions.assertNotNull(AppDriver.getInstance());
     }
 
-    @Test
-    @Disabled
-    void getSingle(){
-        System.out.println(new AutoTools().hashCode());
-        System.out.println(new AutoTools().hashCode());
-        System.out.println(new AutoTools().hashCode());
-        System.out.println(new AutoTools().hashCode());
-        System.out.println(new AppUtil().hashCode());
-        System.out.println(new AppUtil().hashCode());
-        System.out.println(new AppUtil().hashCode());
-        System.out.println(new AppUtil().hashCode());
-        System.out.println(new AppUtil().hashCode());
-        System.out.println(new AppUtil().hashCode());
-        System.out.println(new AppUtil().getAndroidDriver().hashCode());
-        System.out.println(new AppUtil().getAndroidDriver().hashCode());
-        System.out.println(new AppUtil().getAndroidDriver().hashCode());
-        System.out.println(new AppUtil().getAndroidDriver().hashCode());
-        System.out.println(new AppUtil().getAndroidDriver().hashCode());
-    }
 }
