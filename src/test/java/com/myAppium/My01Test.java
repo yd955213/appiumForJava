@@ -1,9 +1,7 @@
 package com.myAppium;
 
-import com.myAppium.app.AppDriver;
 import com.myAppium.app.AppUtil;
 import io.appium.java_client.MobileElement;
-import org.apache.poi.ss.formula.functions.T;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

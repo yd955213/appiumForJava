@@ -1,6 +1,7 @@
 package com.myAppium.app;
 
 import com.myAppium.Utils.uiUtil.AutoTools;
+import com.myAppium.driver.AppDriver;
 import com.myAppium.script.testCase.Login;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;

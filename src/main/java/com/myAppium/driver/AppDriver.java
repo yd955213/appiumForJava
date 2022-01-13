@@ -1,4 +1,4 @@
-package com.myAppium.app;
+package com.myAppium.driver;
 
 import com.myAppium.DriverFactory.AppiumDriverBuilder;
 import com.myAppium.Utils.commm.AppiumProperties;

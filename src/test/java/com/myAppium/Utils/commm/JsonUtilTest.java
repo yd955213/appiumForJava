@@ -1,20 +1,22 @@
-package com.myAppium.Utils.uiUtil;
+package com.myAppium.Utils.commm;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.poi.util.Beta;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
 
-public class FastjsonAndGsonTest {
+class JsonUtilTest {
+    JsonUtil jsonUtil;
     /**
      * 1、性能上来说，fastjson 强于 gson
      * 2、从功能或者可控的细腻度来说，gson 强于 fastjson
-     * 建议混用：Gson将bean转换json确保数据的正确，使用FastJson将Json转换Bean。兼顾性能和准确性
+     * 建议混用：Gson将bean转换json字符串确保数据的正确，使用FastJson将字符串Json转换Bean。兼顾性能和准确性
      */
     User user;
     RequestFermat<User> requestFermat;
@@ -24,6 +26,8 @@ public class FastjsonAndGsonTest {
 
     @BeforeEach
     void setUp(){
+        jsonUtil = new JsonUtil();
+        
         user = new User();
         user.setAge(20);
         user.setName("test");
@@ -37,14 +41,14 @@ public class FastjsonAndGsonTest {
     @Test
     void fastjsonTest(){
         System.out.println(JSON.toJSONString(requestFermat));
-        RequestFermat requestFermat = JSON.parseObject(testJsonStr, new TypeReference<RequestFermat<User>>(){}.getType());
+        RequestFermat<User> requestFermat = JSON.parseObject(testJsonStr, new TypeReference<RequestFermat<User>>(){}.getType());
         System.out.println(requestFermat);
     }
 
     @Test
     void gsonTest(){
         gson = new GsonBuilder().serializeNulls().create();
-        String toJson = gson.toJson(requestFermat, new TypeToken<RequestFermat<User>>() {}.getType());
+        String toJson = gson.toJson(requestFermat, new TypeToken<RequestFermat<User>>(){}.getType());
         System.out.println(toJson);
 
         // gson 区分大小写
@@ -56,11 +60,11 @@ public class FastjsonAndGsonTest {
     void toJsonPerformanceTest(){
 
         int times = 5000000;
-        Long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         for (int i=0; i < times; i++){
             JSON.toJSONString(requestFermat);
         }
-        Long endTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
 
         System.out.println("fastjson 耗时" + (startTime - endTime));
 
@@ -84,11 +88,11 @@ public class FastjsonAndGsonTest {
     void formJsonPerformanceTest(){
         Type type = new TypeReference<RequestFermat<User>>() {}.getType();
         int times = 5000000;
-        Long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         for (int i=0; i < times; i++){
             JSON.parseObject(testJsonStr, type);
         }
-        Long endTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
 
         System.out.println("fastjson 耗时" + (startTime - endTime));
 
@@ -96,7 +100,7 @@ public class FastjsonAndGsonTest {
         gson = new Gson();
         startTime = System.currentTimeMillis();
         for (int i=0; i < times; i++){
-            gson.fromJson(testJsonStr, type);
+            gson.fromJson(testJsonStr, typeToken);
         }
         endTime = System.currentTimeMillis();
 
@@ -106,8 +110,23 @@ public class FastjsonAndGsonTest {
         gson 耗时-4170
          */
     }
+    @Test
+    void toJsonString() {
 
+        Type typeToken = new TypeToken<RequestFermat<User>>(){}.getType();
+        System.out.println(jsonUtil.toJsonString(requestFermat, typeToken));
+    }
 
+    @Test
+    void parseObject() {
+        Type type = new TypeReference<RequestFermat<User>>(){}.getType();
+        RequestFermat<User> object = jsonUtil.parseObject(testJsonStr, type);
+
+        System.out.println(object);
+        System.out.println(object.getData());
+    }
+
+    @Beta
     private static class RequestFermat<T>{
         String code;
         String msg;
@@ -127,7 +146,7 @@ public class FastjsonAndGsonTest {
         }
 
         public RequestFermat<T> setCode(String code) {
-            code = code;
+            this.code = code;
             return this;
         }
 
@@ -150,6 +169,7 @@ public class FastjsonAndGsonTest {
         }
     }
 
+    @Beta
     private static class User{
         String name;
         String gender;
