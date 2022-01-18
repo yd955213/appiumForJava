@@ -1,9 +1,8 @@
-package com.myAppium.script.testCase;
+package com.myAppium.script.faceApp361.testCase;
 
 import com.myAppium.app.AppUtil;
-import com.myAppium.script.emun.HeaderUI;
-import com.myAppium.script.emun.SystemSettingUi;
-import com.myAppium.script.emun.SystemSettings;
+import com.myAppium.script.faceApp361.emun.HeaderUI;
+import com.myAppium.script.faceApp361.emun.SystemSettingUi;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.util.ObjectUtils;
 

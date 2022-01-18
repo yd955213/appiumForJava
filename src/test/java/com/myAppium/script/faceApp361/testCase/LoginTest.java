@@ -1,8 +1,6 @@
-package com.myAppium.script.testCase;
+package com.myAppium.script.faceApp361.testCase;
 
-import com.myAppium.app.AppUtil;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

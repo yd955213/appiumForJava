@@ -1,4 +1,4 @@
-package com.myAppium.script.testCase;
+package com.myAppium.script.faceApp361.testCase;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

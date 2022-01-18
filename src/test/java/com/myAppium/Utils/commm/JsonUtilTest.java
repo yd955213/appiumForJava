@@ -114,7 +114,7 @@ class JsonUtilTest {
     void toJsonString() {
 
         Type typeToken = new TypeToken<RequestFermat<User>>(){}.getType();
-        System.out.println(jsonUtil.toJsonString(requestFermat, typeToken));
+        System.out.println(jsonUtil.toJsonStringWithNull(requestFermat, typeToken));
     }
 
     @Test

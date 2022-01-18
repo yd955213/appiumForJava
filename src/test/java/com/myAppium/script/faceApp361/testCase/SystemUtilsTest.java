@@ -1,10 +1,8 @@
-package com.myAppium.script.testCase;
+package com.myAppium.script.faceApp361.testCase;
 
 import com.myAppium.app.AppUtil;
-import com.myAppium.script.emun.SystemSettings;
+import com.myAppium.script.faceApp361.emun.SystemSettings;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class SystemUtilsTest {
 

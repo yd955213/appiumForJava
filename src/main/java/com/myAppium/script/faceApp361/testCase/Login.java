@@ -1,10 +1,10 @@
-package com.myAppium.script.testCase;
+package com.myAppium.script.faceApp361.testCase;
 
 import com.myAppium.Utils.commm.ReadProperties;
 import com.myAppium.app.AppUtil;
 import com.myAppium.entity.properties.PropertiesLocation;
-import com.myAppium.script.emun.HeaderUI;
-import com.myAppium.script.emun.HomePage;
+import com.myAppium.script.faceApp361.emun.HeaderUI;
+import com.myAppium.script.faceApp361.emun.HomePage;
 import io.appium.java_client.MobileElement;
 
 public class Login {

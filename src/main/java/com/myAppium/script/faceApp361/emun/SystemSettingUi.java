@@ -1,4 +1,4 @@
-package com.myAppium.script.emun;
+package com.myAppium.script.faceApp361.emun;
 
 public enum SystemSettingUi {
     DEVICE_NAME("//*[contains(@text, \"设备名称\")]/following-sibling::*"),

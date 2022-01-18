@@ -1,4 +1,4 @@
-package com.myAppium.script.emun;
+package com.myAppium.script.faceApp361.emun;
 
 public enum SeniorSettingUi {
     AUTO_REBOOT("//*[contains(@text,\"自动重启\")]/following-sibling::*"),

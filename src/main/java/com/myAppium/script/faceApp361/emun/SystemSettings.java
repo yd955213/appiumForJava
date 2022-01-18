@@ -1,4 +1,4 @@
-package com.myAppium.script.emun;
+package com.myAppium.script.faceApp361.emun;
 
 public enum SystemSettings {
     EMPLOYEE_MANAGEMENT("com.das.face:id/btnEmployeeManagement"),

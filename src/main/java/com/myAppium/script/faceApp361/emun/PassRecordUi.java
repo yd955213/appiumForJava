@@ -1,4 +1,4 @@
-package com.myAppium.script.emun;
+package com.myAppium.script.faceApp361.emun;
 
 public enum PassRecordUi {
     SEARCH_TEXT("com.das.face:id/etSearchPerson"),

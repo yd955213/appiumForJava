@@ -1,4 +1,4 @@
-package com.myAppium.script.emun;
+package com.myAppium.script.faceApp361.emun;
 
 import org.junit.jupiter.api.Test;
 
