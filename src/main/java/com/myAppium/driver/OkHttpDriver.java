@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import okhttp3.*;
 import okhttp3.internal.Internal;
 import org.apache.commons.collections4.map.HashedMap;
+import org.springframework.util.ObjectUtils;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class OkHttpDriver {
@@ -52,6 +54,11 @@ public class OkHttpDriver {
         }
     }
 
+    public void addHeader(String key, String value){
+        headerMap.put(key, value);
+        userHeader();
+    }
+
     public void removeHeader(String key){
         if(headerMap != null) headerMap.remove(key);
     }
@@ -64,6 +71,94 @@ public class OkHttpDriver {
         isUserHeader = true;
     }
 
+    /**
+     * get 请求
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    public String get(String url) throws IOException {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            Headers headers = response.headers();
+            for(int i = 0; i < headers.size(); i++) {
+                System.out.println(headers.name(i) + ": " + headers.value(i));
+            }
+            return response.body().string();
+        }
+    }
+
+    /**
+     *  当param中有的值为 null 会抛 空指针异常，后期解决
+     * @param url
+     * @param param
+     * @return
+     * @throws IOException
+     */
+    public String get(String url, Map<String, Object> param) throws IOException {
+        MediaType mediaType = MediaType.get("application/json; charset=utf-8");
+        HttpUrl.Builder builder = HttpUrl.parse(url).newBuilder();
+        if (param != null){
+            for (Map.Entry<String, Object> entry: param.entrySet()){
+                if(null != entry.getValue().toString())
+                    builder.addQueryParameter(entry.getKey(), entry.getValue().toString());
+            }
+//            Set<Map.Entry<String, Object>> entries = param.entrySet();
+//            if(null != entries){
+//                for (Map.Entry<String, Object> entry: entries){
+//                    builder.addQueryParameter(entry.getKey(), entry.getValue().toString());
+//                }
+//            }
+        }
+
+        HttpUrl build = builder.build();
+        Request request = new Request.Builder().url(build).build();
+
+        try (Response response = client.newCall(request).execute()) {
+            Headers headers = response.headers();
+//            for(int i = 0; i < headers.size(); i++) {
+//                System.out.println(headers.name(i) + ": " + headers.value(i));
+//            }
+            return response.body().string();
+        }
+    }
+    public String potRequestPayLoad(String url, String jsonString){
+        MediaType mediaType = MediaType.get("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(jsonString, mediaType);
+        Request.Builder newBuilder = new Request.Builder();
+        if(isUserHeader){
+            for(String key: headerMap.keySet()){
+                newBuilder.addHeader(key, headerMap.get(key));
+            }
+        }
+        Request request =
+                newBuilder.url(url)
+                        .post(body)
+                        .build();
+        Response response = null;
+        String responseString = null;
+        int statusCode;
+        try {
+            response = client.newCall(request).execute();
+            statusCode = response.code();
+            if (statusCode == 200 || response.isSuccessful()){
+            }
+
+            responseString = response.body().string();
+            System.out.println("responseString = " + responseString);
+        } catch (Exception e) {
+//            e.printStackTrace();
+            statusCode = 500;
+            responseString = "请求异常：错误信息：" + e.getMessage();
+        }finally {
+            if (response !=null) response.close();
+        }
+
+        return responseString;
+    }
     /**
      * 发送json 格式数据
      * @param url

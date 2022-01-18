@@ -7,9 +7,17 @@ import com.google.gson.GsonBuilder;
 import java.lang.reflect.Type;
 public class JsonUtil {
 
-    public String toJsonString(Object bean, Type typeToken){
+    public static String toJsonStringWithNull(Object bean, Type typeToken){
 //        Type type = new TypeToken<>() {}.getType();
         Gson gson = new GsonBuilder().serializeNulls().create();
+        return toJsonString(gson, bean, typeToken);
+    }
+    public static String toJsonStringNotNull(Object bean, Type typeToken){
+//        Type type = new TypeToken<>() {}.getType();
+        Gson gson = new Gson();
+        return toJsonString(gson, bean, typeToken);
+    }
+    private static String toJsonString(Gson gson, Object bean, Type typeToken){
         String s = null;
         try {
             s = gson.toJson(bean, typeToken);
@@ -19,7 +27,7 @@ public class JsonUtil {
         return s;
     }
 
-    public <T> T parseObject(String jsonStr, Type typeReference){
+    public static  <T> T parseObject(String jsonStr, Type typeReference){
 //        Type type = new TypeReference<T>(){}.getType();
         try {
            return (T) JSON.parseObject(jsonStr, typeReference);
