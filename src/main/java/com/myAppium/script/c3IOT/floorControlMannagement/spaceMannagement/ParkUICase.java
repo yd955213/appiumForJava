@@ -8,13 +8,18 @@ import com.myAppium.driver.OkHttpDriver;
 import com.myAppium.script.c3IOT.comm.entity.ResponseGson;
 import com.myAppium.script.c3IOT.comm.entity.WebUICase;
 import com.myAppium.script.c3IOT.floorControlMannagement.header.HeaderUI;
+import com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement.api.entity.AddPark;
 import com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement.api.entity.ListParkRequest;
 import com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement.api.entity.ListParkResponse;
+import com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement.ui.locationExpression.AddParkUI;
 import com.myAppium.script.c3IOT.login.LoginUICase;
 import com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement.ui.locationExpression.ParkUI;
 import com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement.ui.locationExpression.SpaceTree;
 import org.junit.jupiter.api.Assertions;
+import org.openqa.selenium.WebElement;
+import org.springframework.util.ObjectUtils;
 
+import java.util.List;
 import java.util.Map;
 
 public class ParkUICase extends WebUICase {
@@ -34,32 +39,38 @@ public class ParkUICase extends WebUICase {
         }catch (Exception e){
             webUtil.waitTitle("http://172.168.91.51/admin/lk");
         }
+        webUtil.sleep(50);
     }
 
     public void intoSpaceManagementUI(){
         intoFloorControlSystem();
         webUtil.clickByXPath(SpaceTree.SPACE);
+        // 防止UI 刷新不及时， 这里等待100毫秒， 若不考虑 测试的时长， 等待时间越长越好
+        webUtil.sleep(100);
     }
 
     public void intoParkManagementUI(){
         intoSpaceManagementUI();
         webUtil.clickByXPath(SpaceTree.PARK);
+        webUtil.sleep(100);
 
     }
     public void intoBuildingManagementUI(){
         intoSpaceManagementUI();
         webUtil.clickByXPath(SpaceTree.BUILDING);
+        webUtil.sleep(100);
 
     }
     public void intoFloorManagementUI(){
         intoSpaceManagementUI();
         webUtil.clickByXPath(SpaceTree.FLOOR);
+        webUtil.sleep(100);
 
     }
     public void intoRoomManagementUI(){
         intoSpaceManagementUI();
         webUtil.clickByXPath(SpaceTree.ROOM);
-
+        webUtil.sleep(100);
     }
 
     public void searchPackByName(String parkName){
@@ -99,6 +110,13 @@ public class ParkUICase extends WebUICase {
         Assertions.assertTrue(webUtil.getTextByXPath(locationExpression).contains(parkName));
     }
 
+    /**
+     * 通过 园区管理分页列表接口获取数据， 用于查询结果的UI 断言
+     * @param parkName
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     public ListParkResponse getListPark(String parkName, Integer pageNum, Integer pageSize){
         ListParkRequest listParkRequest = new ListParkRequest();
         listParkRequest.setPageNum(pageNum);
@@ -111,4 +129,54 @@ public class ParkUICase extends WebUICase {
         return object.getData();
     }
 
+    public void addParkCase(String ... params){
+        // 进入编辑页面
+        intoParkManagementUI();
+
+        webUtil.clickByXPath(ParkUI.ADD_BUTTON_XPATH);
+        webUtil.sleep(100);
+
+        webUtil.getWindowHandles();
+
+        int length = params.length;
+//        // 不输入任何参数直接确定
+//        if(length == 0) {
+//            webUtil.clickByXPath(AddParkUI.confirmButton);
+//            // 断言
+//        }
+
+        webUtil.input(AddParkUI.parkNameInput, "test01");
+
+//        webUtil.input(AddParkUI.keywordAddressInput, "达实");
+        // 进行城市选择
+        webUtil.click(AddParkUI.parkAddressInput);
+        webUtil.sleep(100);
+        webUtil.hover(AddParkUI.parkAddressList);
+        String cityLocationExpression = "//li[contains(@title,\"%s\")]";
+        webUtil.click(String.format(cityLocationExpression, "广东"));
+        webUtil.click(String.format(cityLocationExpression, "深圳"));
+        webUtil.click(String.format(cityLocationExpression, "南山"));
+        webUtil.input(AddParkUI.keywordAddressInput, "达实");
+        webUtil.hover(AddParkUI.keywordAddressList);
+        webUtil.click(AddParkUI.keywordAddressInput);
+
+        String keywordAddressList = "//span[contains(text() ,\"%s\")]";
+        List<WebElement> cityList= webUtil.findElements(String.format(keywordAddressList, "达实"));
+        if (!ObjectUtils.isEmpty(cityList)){
+            // 默认点击第二个，其设计为：第一个为搜索，第二个开始为实际地址
+            cityList.get(1).click();
+        }
+
+        webUtil.sleep(1000);
+        // 如果获取城市成功，会自动补齐经纬度
+        System.out.println("longitudeInput = " + webUtil.getText(AddParkUI.longitudeInput));
+        webUtil.runJs("window.document.getElementById(\"longitude\").value");
+        System.out.println("longitudeInput = " );
+//        System.out.println("latitudeInput" + webUtil.getText(AddParkUI.latitudeInput));
+
+        webUtil.input(AddParkUI.contactNameForParkInput, "test1");
+        webUtil.input(AddParkUI.contactPhoneInput, "123");
+        System.out.println("contactPhoneInput = " + webUtil.getText(AddParkUI.contactPhoneInput));
+        webUtil.click(AddParkUI.disableRadio);
+    }
 }

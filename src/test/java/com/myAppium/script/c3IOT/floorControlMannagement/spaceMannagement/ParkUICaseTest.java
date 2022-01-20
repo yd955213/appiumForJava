@@ -25,4 +25,9 @@ class ParkUICaseTest {
     void getListPark() {
         System.out.println(parkUICase.getListPark("测试", 1, 15));
     }
+
+    @Test
+    void addParkCase() {
+        parkUICase.addParkCase();
+    }
 }
