@@ -1,6 +1,5 @@
 package com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,11 +18,6 @@ class ParkUICaseTest {
     @ValueSource(strings = {"测试", "1"})
     void searchPackByName(String value) {
         parkUICase.searchPackByName(value);
-    }
-
-    @Test
-    void getListPark() {
-        System.out.println(parkUICase.getListPark("测试", 1, 15));
     }
 
     @Test

@@ -21,8 +21,9 @@ public class ExcelOperation {
     public String exceptionInfo;
 
 
-    public ExcelOperation() {
-//        doCreateWorkbook(filePath);
+    public ExcelOperation(String filePath) {
+        this.filePath = filePath;
+        doCreateWorkbook(filePath);
     }
 
     /**
@@ -30,7 +31,7 @@ public class ExcelOperation {
      * @return
      */
     public int getNumberOfSheets() {
-        if (!isWorkbookIsNUll())
+        if (isNUllWorkbook())
             return 0;
         return workbook.getNumberOfSheets();
     }
@@ -40,7 +41,7 @@ public class ExcelOperation {
      * @return
      */
     public List<String> getAllSheetNames(){
-        if (!isWorkbookIsNUll())
+        if (isNUllWorkbook())
             return null;
         int number = getNumberOfSheets();
         List<String> list = new LinkedList<>();
@@ -51,12 +52,12 @@ public class ExcelOperation {
     }
 
     public void useSheetByName(String sheetName){
-        isWorkbookIsNUll();
+        isNUllWorkbook();
         sheet = workbook.getSheet(sheetName);
         maxRows = sheet.getPhysicalNumberOfRows();
     }
     public void useSheetByIndex(int index){
-        isWorkbookIsNUll();
+        isNUllWorkbook();
         sheet = workbook.getSheetAt(index);
         maxRows = sheet.getPhysicalNumberOfRows();
     }
@@ -69,7 +70,7 @@ public class ExcelOperation {
         return maxRows;
     }
 
-    public boolean isWorkbookIsNUll(){
+    public boolean isNUllWorkbook(){
         try {
             if (null == workbook){
                 doCreateWorkbook(this.filePath);
@@ -81,7 +82,8 @@ public class ExcelOperation {
 
             return false;
         }catch (Exception e) {
-            return false;
+            e.printStackTrace();
+            return true;
         }
     }
 

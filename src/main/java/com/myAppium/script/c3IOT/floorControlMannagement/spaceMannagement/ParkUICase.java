@@ -1,15 +1,10 @@
 package com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
-import com.myAppium.Utils.commm.JsonUtil;
 import com.myAppium.app.WebUtil;
 import com.myAppium.driver.OkHttpDriver;
 import com.myAppium.script.c3IOT.comm.entity.ResponseGson;
 import com.myAppium.script.c3IOT.comm.entity.WebUICase;
 import com.myAppium.script.c3IOT.floorControlMannagement.header.HeaderUI;
-import com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement.api.entity.AddPark;
-import com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement.api.entity.ListParkRequest;
 import com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement.api.entity.ListParkResponse;
 import com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement.ui.locationExpression.AddParkUI;
 import com.myAppium.script.c3IOT.login.LoginUICase;
@@ -20,7 +15,6 @@ import org.openqa.selenium.WebElement;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
-import java.util.Map;
 
 public class ParkUICase extends WebUICase {
     OkHttpDriver okHttpDriver;
@@ -34,10 +28,12 @@ public class ParkUICase extends WebUICase {
         if(!LoginUICase.isIsLogin()){
             login.login();
         }
-        try {
+        // 页面标题
+        webUtil.waitTitle("C3 IoT");
+        WebElement webElement = webUtil.clickByXPath(HeaderUI.Floor_control_business);
+        // 找不到就在执行一次
+        if (webElement == null) {
             webUtil.clickByXPath(HeaderUI.Floor_control_business);
-        }catch (Exception e){
-            webUtil.waitTitle("http://172.168.91.51/admin/lk");
         }
         webUtil.sleep(50);
     }
@@ -92,15 +88,14 @@ public class ParkUICase extends WebUICase {
 //            e.printStackTrace();
         }
         // 通过 园区管理分页列表 接口 获取结果，进行UI的预期断言
-
-        ListParkResponse listPark = getListPark(parkName, 1, size);
+        ResponseGson<ListParkResponse> listPark = new ParkApiCase().listPack(parkName, 1, size);
         System.out.println(listPark);
-        if (listPark.getList().isEmpty()){
+        if (listPark.getData().getList().isEmpty()){
             Assertions.assertNotNull(webUtil.findElementXpath(ParkUI.empty_description));
             return;
         }
-        Integer total = listPark.getPage().getTotal();
-        Integer pageSize1 = listPark.getPage().getPageSize();
+        Integer total = listPark.getData().getPage().getTotal();
+        Integer pageSize1 = listPark.getData().getPage().getPageSize();
 
         Assertions.assertTrue(webUtil.getTextByXPath(ParkUI.TOTAL_INFO).contains(String.valueOf(total)));
         Assertions.assertTrue(webUtil.getTextByXPath(ParkUI.PAGE_COMBOBOX_CLASS).contains(String.valueOf(pageSize1)));
@@ -110,24 +105,6 @@ public class ParkUICase extends WebUICase {
         Assertions.assertTrue(webUtil.getTextByXPath(locationExpression).contains(parkName));
     }
 
-    /**
-     * 通过 园区管理分页列表接口获取数据， 用于查询结果的UI 断言
-     * @param parkName
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    public ListParkResponse getListPark(String parkName, Integer pageNum, Integer pageSize){
-        ListParkRequest listParkRequest = new ListParkRequest();
-        listParkRequest.setPageNum(pageNum);
-        listParkRequest.setPageSize(pageSize);
-        listParkRequest.setKeyword(parkName);
-        String s = JsonUtil.toJsonStringNotNull(listParkRequest, ListParkRequest.class);
-        String responseData = new ParkApiCase().listPack(s);
-        ResponseGson<ListParkResponse> object = JsonUtil.parseObject(responseData, new TypeReference<ResponseGson<ListParkResponse>>() {
-        }.getType());
-        return object.getData();
-    }
 
     public void addParkCase(String ... params){
         // 进入编辑页面
@@ -167,11 +144,11 @@ public class ParkUICase extends WebUICase {
             cityList.get(1).click();
         }
 
-        webUtil.sleep(1000);
+        webUtil.sleep(100);
         // 如果获取城市成功，会自动补齐经纬度
         System.out.println("longitudeInput = " + webUtil.getText(AddParkUI.longitudeInput));
-        webUtil.runJs("window.document.getElementById(\"longitude\").value");
-        System.out.println("longitudeInput = " );
+//        webUtil.runJs("window.document.getElementById(\"longitude\").value");
+        System.out.println("longitudeInput = " + webUtil.getTestByJs(AddParkUI.longitudeInput) );
 //        System.out.println("latitudeInput" + webUtil.getText(AddParkUI.latitudeInput));
 
         webUtil.input(AddParkUI.contactNameForParkInput, "test1");

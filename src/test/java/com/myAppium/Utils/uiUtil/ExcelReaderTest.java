@@ -9,7 +9,7 @@ import java.io.IOException;
 
 @Disabled
 class ExcelReaderTest {
-    ExcelReader excelReaderXls = new ExcelReader("C:\\Users\\yangdang\\Desktop\\新建 XLS 工作表 (2).xls");
+    ExcelReader excelReaderXls = new ExcelReader("C:\\Users\\yangdang\\Desktop\\新建 XLS 工作表 (2)_copy.xls");
 
     ExcelReader excelReaderXlsx = new ExcelReader("C:\\Users\\yangdang\\Desktop\\新建 XLSX 工作表.xlsx");
     @Test

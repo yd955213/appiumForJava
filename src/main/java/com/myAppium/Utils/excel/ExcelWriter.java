@@ -18,8 +18,7 @@ public class ExcelWriter extends ExcelOperation{
     }
 
     public ExcelWriter(String excelFilePath, String copyExcelFilePath){
-        super();
-        this.excelFilePath = excelFilePath;
+        super(excelFilePath);
         this.copyExcelFilePath = copyExcelFilePath;
         copyExcelFilePath();
         createWorkbook();

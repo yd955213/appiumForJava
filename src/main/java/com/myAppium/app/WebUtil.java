@@ -74,7 +74,7 @@ public class WebUtil {
     }
 
     /**
-     * 暂时支持 xpath, id, class , css选择器
+     * 暂时支持 xpath, css选择器
      * 规定
      *
      * @param locationExpression
@@ -82,11 +82,12 @@ public class WebUtil {
      */
     public WebElement findElement(String locationExpression) {
         WebElement webElement = null;
-        if (locationExpression.startsWith("\\.")) {
-            webElement = findElementByClassName(locationExpression.substring(1));
-        } else if (locationExpression.startsWith("#")) {
-            webElement = findElementById(locationExpression.substring(1));
-        } else if (locationExpression.startsWith("//")) {
+//        if (locationExpression.startsWith("\\.")) {
+//            webElement = findElementByClassName(locationExpression.substring(1));
+//        } else if (locationExpression.startsWith("#")) {
+//            webElement = findElementById(locationExpression.substring(1));
+//        } else
+            if (locationExpression.startsWith("//")) {
             webElement = findElementXpath(locationExpression);
         } else {
             webElement = findElementByCssSelector(locationExpression);
@@ -97,19 +98,20 @@ public class WebUtil {
     public List<WebElement> findElements(String locationExpression) {
         List<WebElement> elements = null;
         String errMsg = "查找元素失败，表达式为：%s, 异常信息为：%s";
-        if (locationExpression.startsWith("\\.")) {
-            try {
-                elements = webDriver.findElements(By.className(locationExpression.substring(1)));
-            } catch (Exception e) {
-                System.out.println(String.format(errMsg, locationExpression, errMsg));
-            }
-        } else if (locationExpression.startsWith("#")) {
-            try {
-                elements = webDriver.findElements(By.id(locationExpression.substring(1)));
-            } catch (Exception e) {
-                System.out.println(String.format(errMsg, locationExpression, errMsg));
-            }
-        } else if (locationExpression.startsWith("//")) {
+//        if (locationExpression.startsWith("\\.")) {
+//            try {
+//                elements = webDriver.findElements(By.className(locationExpression.substring(1)));
+//            } catch (Exception e) {
+//                System.out.println(String.format(errMsg, locationExpression, errMsg));
+//            }
+//        } else if (locationExpression.startsWith("#")) {
+//            try {
+//                elements = webDriver.findElements(By.id(locationExpression.substring(1)));
+//            } catch (Exception e) {
+//                System.out.println(String.format(errMsg, locationExpression, errMsg));
+//            }
+//        } else
+            if (locationExpression.startsWith("//")) {
             try {
                 elements = webDriver.findElements(By.xpath(locationExpression));
             } catch (Exception e) {
@@ -201,7 +203,6 @@ public class WebUtil {
         }
         return false;
     }
-
     public WebElement clickByXPath(String locationExpression) {
         WebElement element = null;
         try {
@@ -224,18 +225,36 @@ public class WebUtil {
         return value;
     }
 
-    public void runJs(String JsString) {
+    /**
+     * 执行js 语句， 返回 css选择器表达式 对应元素的文本值， 异常情况下返回null
+     * @param cssSelectorExpression css选择器表达式
+     * @return null || cssSelectorExpression对应元素的文本值
+     */
+    public String getTestByJs(String cssSelectorExpression){
+        String expression = "return document.querySelector(\"%s\").value";
+        expression = String.format(expression, cssSelectorExpression);
+//        System.out.println(expression);
+        return runJs(expression);
+    }
+
+    public String runJs(String JsString) {
         try {
             JavascriptExecutor JsExecutor = (JavascriptExecutor) this.webDriver;
             Object o = JsExecutor.executeScript(JsString);
-            System.out.println(o);
+            if (null == o) return null;
+            return o.toString();
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(String.format("执行js语句失败，表达式为：%s, 异常信息为：%s", JsString, e.getMessage()));
-//            return null;
+            return null;
         }
     }
 
+    /**
+     * 获取元素的文本值
+     * @param locationExpression
+     * @return
+     */
     public String getTextByXPath(String locationExpression) {
         String value = null;
         WebElement element;
@@ -288,5 +307,9 @@ public class WebUtil {
         } catch (Exception e) {
             System.out.println(String.format("鼠标悬停失败，表达式为：%s, 异常信息为：%s", locationExpression, e.getMessage()));
         }
+    }
+
+    public WebDriver getWebDriver() {
+        return webDriver;
     }
 }

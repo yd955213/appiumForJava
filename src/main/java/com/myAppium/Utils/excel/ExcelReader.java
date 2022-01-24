@@ -19,9 +19,7 @@ public class ExcelReader extends ExcelOperation{
 
 
     public ExcelReader(String filePath) {
-        super();
-        this.filePath = filePath;
-        this.workbook = doCreateWorkbook(filePath);
+        super(filePath);
     }
 
     /**
@@ -31,7 +29,7 @@ public class ExcelReader extends ExcelOperation{
      */
     public List<String> readLine(int rowIndex){
         List<String> list = new ArrayList<>();
-        if(super.isWorkbookIsNUll())
+        if(super.isNUllWorkbook())
             return list;
 
         Row row = sheet.getRow(rowIndex);
@@ -45,8 +43,22 @@ public class ExcelReader extends ExcelOperation{
         return list;
     }
 
+    public List<List<String>> readAll(){
+        List<String> allSheetNames = getAllSheetNames();
+        List<List<String>> list = new ArrayList<>();
+        int maxRows =0;
+        for(String sheetName: allSheetNames){
+            useSheetByName(sheetName);
+            maxRows = getMaxRows();
+            for (int i = 0; i < maxRows; i++){
+                list.add(readLine(i));
+            }
+        }
+        return list;
+    }
+
     public String readCell(int row, int column){
-        if(super.isWorkbookIsNUll())
+        if(super.isNUllWorkbook())
             return null;
         Row myRow = sheet.getRow(row);
         if (null == myRow)
@@ -102,6 +114,5 @@ public class ExcelReader extends ExcelOperation{
         }
         return cellValue;
     }
-
 
 }
