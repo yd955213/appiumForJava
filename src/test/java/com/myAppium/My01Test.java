@@ -5,6 +5,9 @@ import io.appium.java_client.MobileElement;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Disabled
 public class My01Test {
 
@@ -47,12 +50,22 @@ public class My01Test {
 
     @Test
     void test03(){
-        AppUtil appUtil = AppUtil.getInstance();
-        MobileElement element;
-        while (true){
-            element = appUtil.findElement("com.das.face:id/ivLogo");
-            if(element != null)
-                System.out.println("test = ");
-        }
+//        AppUtil appUtil = AppUtil.getInstance();
+//        MobileElement element;
+//        while (true){
+//            element = appUtil.findElement("com.das.face:id/ivLogo");
+//            if(element != null)
+//                System.out.println("test = ");
+//        }
+
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        List<Integer> list2 = list;
+        list2.add(4);
+
+        System.out.println(list.size());
+        System.out.println(list2.size());
     }
 }

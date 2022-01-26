@@ -22,6 +22,11 @@ class ParkUICaseTest {
 
     @Test
     void addParkCase() {
-        parkUICase.addParkCase();
+//        parkUICase.addParkCase();
+    }
+
+    @Test
+    void modifyParkName() {
+        parkUICase.modifyParkName("测试-达实","测试-达实");
     }
 }

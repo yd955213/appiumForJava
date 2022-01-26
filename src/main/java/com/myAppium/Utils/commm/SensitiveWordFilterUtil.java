@@ -17,26 +17,14 @@ public class SensitiveWordFilterUtil {
      *
      * 不考虑只有一个字的情况，例如：将“操”，设置为敏感字， 那么 “操场" 这个词会被判断为包含敏感词,但是它敏感吗？
      */
-    private static Map<Object, Object> sensitiveWordMap;
 
-//    private SensitiveWordFilterUtil(){ initSensitiveWordFromExcel();}
-//
-//    private static class SensitiveWordFilterUtilHolder{
-//        private final static SensitiveWordFilterUtil INSTANCE = new SensitiveWordFilterUtil();
-//    }
-//
-//    /**
-//     *  防止工具类每次都去写文件 这里写成单例模式
-//     * @return
-//     */
-//    public static  SensitiveWordFilterUtil getInstance(){
-//        return SensitiveWordFilterUtilHolder.INSTANCE;
-//    }
+    private static Map<Object, Object> sensitiveWordMap;
+    private static List<List<String>> sensitiveWordList;
 
     private static void initSensitiveWordFromExcel() {
-        List<List<String>> lists = null;
+//        List<List<String>> lists = null;
         try {
-            lists = new ExcelReader(new ClassPathResource("static/sensitiveWord/敏感词库表统计.xlsx").getFile().getPath()).readAll();
+            sensitiveWordList = new ExcelReader(new ClassPathResource("static/sensitiveWord/敏感词库表统计.xlsx").getFile().getPath()).readAll();
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("未找到文件，敏感词库生成异常");
@@ -44,9 +32,9 @@ public class SensitiveWordFilterUtil {
 
         HashSet<String> set = new HashSet<>();
         // 第一行 为 标题 跳过
-        for (int i = 1; i < lists.size(); i++) {
-            if (!ObjectUtils.isEmpty(lists.get(i).get(3))) {
-                set.add(lists.get(i).get(3));
+        for (int i = 1; i < sensitiveWordList.size(); i++) {
+            if (!ObjectUtils.isEmpty(sensitiveWordList.get(i).get(3))) {
+                set.add(sensitiveWordList.get(i).get(3));
             }
         }
         initSensitiveWordMap(set);
@@ -197,6 +185,12 @@ public class SensitiveWordFilterUtil {
        return stringBuilder.toString();
    }
 
+   public static String getRandomSensitiveWord(){
+       init();
+       int size = sensitiveWordList.size();
+
+       return sensitiveWordList.get(new Random().nextInt(size)).get(3);
+   }
 
     private static void init(){
         if (ObjectUtils.isEmpty(sensitiveWordMap)){

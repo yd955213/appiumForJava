@@ -4,9 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 class SensitiveWordFilterUtilTest {
 
@@ -25,6 +22,13 @@ class SensitiveWordFilterUtilTest {
         System.out.println(SensitiveWordFilterUtil.findSensitiveWordList("卖淫1嫖娼1杀人犯1法共产党国民党法轮大法"));
     }
 
+    @Test
+    void getRandomSensitiveWord() {
+        for (int i = 0; i < 100; i++){
+            System.out.println(SensitiveWordFilterUtil.getRandomSensitiveWord());
+        }
+
+    }
 
 //    @Test
 //    void initSensitiveWordMap() {
@@ -45,12 +49,5 @@ class SensitiveWordFilterUtilTest {
 //////        System.out.println(SensitiveWordFilterUtil.findSensitiveWordList("卖淫嫖娼卖淫卖淫卖淫"));
 //    }
 
-    @Test
-    void test02(){
 
-        Map<Object, Object> sensitiveWordMap = SensitiveWordFilterUtil.getSensitiveWordMap();
-//        System.out.println(sensitiveWordMap);
-        System.out.println(sensitiveWordMap.get("卖") == null);
-        System.out.println(sensitiveWordMap.get(1));
-    }
 }

@@ -4,14 +4,18 @@ import com.alibaba.fastjson.TypeReference;
 import com.myAppium.DriverFactory.AppiumDriverBuilder;
 import com.myAppium.Utils.commm.JsonUtil;
 import com.myAppium.app.AppUtil;
+import com.myAppium.app.WebUtil;
 import com.myAppium.entity.properties.Appium;
 import com.myAppium.script.c3IOT.comm.entity.ResponseGson;
 import com.myAppium.script.c3IOT.floorControlMannagement.spaceMannagement.api.entity.ListParkResponse;
+import com.myAppium.script.c3IOT.login.locationExpression.LoginUI;
 import org.apache.commons.collections.ListUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import com.myAppium.Utils.commm.AppiumProperties;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.springframework.util.ObjectUtils;
 
 import java.util.concurrent.TimeUnit;
@@ -56,5 +60,27 @@ public class My02Test {
 //
         System.out.println(object.getData().getList().isEmpty());
 
+    }
+
+    @Test
+    void test04(){
+        WebUtil webUtil = new WebUtil();
+        webUtil.openBrowser("http://172.168.91.51/login");
+        webUtil.waitTitle("C3 IoT");
+
+        int counts = 1000;
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < counts; i ++){
+            WebElement element = webUtil.getWebDriver().findElement(By.xpath(LoginUI.USER_NAME));
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println("xpath 耗时：" + (endTime - startTime));
+
+        startTime = System.currentTimeMillis();
+        for (int i = 0; i < counts; i ++){
+            WebElement element = webUtil.getWebDriver().findElement(By.name("userName"));
+        }
+        endTime = System.currentTimeMillis();
+        System.out.println("By.name 耗时：" + (endTime - startTime));
     }
 }

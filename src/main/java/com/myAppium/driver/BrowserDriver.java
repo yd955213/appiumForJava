@@ -28,8 +28,7 @@ public class BrowserDriver {
 
     private void initDriver(){
         String OSName = System.getProperty("os.name").toLowerCase();
-        String driverPath = "src\\main\\resources\\static\\wenDriver\\chromeDriver\\";
-//        String driverPath = this.getClass().getResource("static\\wenDriver\\chromeDriver\\chromedriver_win32\\chromedriver.exe").toString();
+        String driverPath = "src\\main\\resources\\static\\webDriver\\chromeDriver\\";
         if(OSName.contains("windows")){
             // 设置 chrome 的路径 问题：为啥 chromedriver.exe 没有放在chrome 浏览器的根目录下，则报错呢？ 以后在找问题
             driverPath +="chromedriver_win32\\chromedriver.exe";
@@ -38,11 +37,9 @@ public class BrowserDriver {
         }else{
             driverPath += "chromedriver_mac64\\chromedriver.exe";
         }
-
-
         System.out.println(driverPath);
-//        System.setProperty("webdriver.chrome.driver", driverPath);
-        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", driverPath);
+//        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe");
         //设置临时环境变量，指定chrome使用静默模式，减少日志输出量
         System.setProperty("webdriver.chrome.silentOutput", "true");
         /**
